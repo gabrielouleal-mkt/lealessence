@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
+import { productsQuery } from '@/lib/products-query';
 import { Header } from "@/components/leal/Header";
 import { Hero } from "@/components/leal/Hero";
 import { BrandMarquee, BrandRails } from "@/components/leal/BrandRail";
@@ -8,6 +9,7 @@ import { About, Benefits, Featured, Footer, IndicationBanner, Kits } from "@/com
 import { useReveal } from "@/hooks/use-reveal";
 
 export const Route = createFileRoute("/")({
+  loader: ({ context }) => context.queryClient.ensureQueryData(productsQuery),
   head: () => ({
     meta: [
       { title: "Leal Essence — Perfumaria Fina | Perfumes árabes e importados" },

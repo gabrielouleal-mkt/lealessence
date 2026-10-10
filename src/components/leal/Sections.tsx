@@ -1,13 +1,16 @@
 import {
   ABOUT_IMAGE_URL,
   LOGO_URL,
-  PRODUCTS,
   WHATSAPP_GENERIC,
   WHATSAPP_INDICATION,
   WHATSAPP_KIT,
   whatsappLink,
 } from "@/data/catalog";
 import { ProductCard } from "./ProductCard";
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { productsQuery } from '@/lib/products-query';
+import officialLogo from '@/assets/official-logo.png.asset.json';
+import { Link } from '@tanstack/react-router';
 import { WhatsAppIcon } from "./Header";
 
 export function Benefits() {
@@ -63,6 +66,7 @@ export function Benefits() {
 }
 
 export function Featured() {
+  const { data: PRODUCTS } = useSuspenseQuery(productsQuery);
   const featured = PRODUCTS.filter((p) => p.featured);
   return (
     <section id="destaques" className="scroll-mt-20 bg-cream py-20 md:py-28">
@@ -215,14 +219,13 @@ export function About() {
       <div className="mx-auto grid max-w-6xl items-center gap-12 px-5 md:grid-cols-2 md:gap-16 md:px-8">
         <div className="reveal relative">
           <img
-            src={ABOUT_IMAGE_URL}
-            alt="Detalhe de frasco de perfume árabe com filigrana dourada, madeira de oud e pétalas"
+            src={officialLogo.url}
+            alt="Logo oficial Leal Essence — Perfumaria Fina"
             loading="lazy"
             width={928}
             height={1152}
-            className="aspect-[4/5] w-full rounded-[2rem] object-cover shadow-[0_40px_70px_-30px_color-mix(in_oklab,var(--color-primary)_40%,transparent)]"
+            className="aspect-square w-full object-contain"
           />
-          <div className="absolute -right-4 -bottom-6 hidden h-32 w-32 rounded-full border border-gold/40 md:block" aria-hidden="true" />
         </div>
         <div className="reveal" style={{ "--reveal-delay": "150ms" } as React.CSSProperties}>
           <p className="eyebrow">Sobre a Leal Essence</p>
@@ -287,6 +290,7 @@ export function Footer() {
         <p className="text-[0.625rem] tracking-[0.24em] text-muted-foreground/70 uppercase">
           Protótipo experimental · Marcas laterais em representação tipográfica
         </p>
+        <Link to="/auth" className="text-xs text-muted-foreground hover:text-primary">Administração</Link>
       </div>
     </footer>
   );

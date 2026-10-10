@@ -1,4 +1,6 @@
-import { BRAND_RAIL_LEFT, BRAND_RAIL_RIGHT, CATALOG_BRANDS } from "@/data/catalog";
+import { BRAND_RAIL_LEFT, BRAND_RAIL_RIGHT } from "@/data/catalog";
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { productsQuery } from '@/lib/products-query';
 
 interface BrandRailProps {
   onSelectBrand: (brand: string | null) => void;
@@ -30,6 +32,8 @@ function BrandColumn({
   onSelectBrand: (brand: string | null) => void;
   activeBrand: string | null;
 }) {
+  const { data: products } = useSuspenseQuery(productsQuery);
+  const CATALOG_BRANDS = [...new Set(products.map(p => p.brand))];
   return (
     <aside
       className={`pointer-events-none fixed top-1/2 z-10 hidden -translate-y-1/2 flex-col items-center gap-10 2xl:flex ${

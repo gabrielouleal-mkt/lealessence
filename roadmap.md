@@ -1,0 +1,4 @@
+- [x] Preserve original logo, copy and publicly visible product data.
+- [x] Create campaign artwork, gentle motion and desktop brand rails.
+- [x] Refine catalog, search and category/brand filters.
+- [ ] Verify desktop/mobile rendering and filter interactions.

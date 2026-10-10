@@ -23,6 +23,16 @@ export function useReveal() {
       { threshold: 0.12, rootMargin: "0px 0px -40px 0px" },
     );
     els.forEach((el) => io.observe(el));
-    return () => io.disconnect();
+    const mutations = new MutationObserver((entries) => {
+      for (const entry of entries) {
+        entry.addedNodes.forEach((node) => {
+          if (!(node instanceof HTMLElement)) return;
+          if (node.matches(".reveal")) io.observe(node);
+          node.querySelectorAll(".reveal").forEach((el) => io.observe(el));
+        });
+      }
+    });
+    mutations.observe(document.body, { childList: true, subtree: true });
+    return () => { io.disconnect(); mutations.disconnect(); };
   }, []);
 }

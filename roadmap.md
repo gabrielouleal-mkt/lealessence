@@ -2,7 +2,8 @@
 - [x] Create campaign artwork, gentle motion and desktop brand rails.
 - [x] Refine catalog, search and category/brand filters.
 - [x] Verify desktop/mobile rendering and filter interactions.
-- [ ] Connect persistent catalog and secure owner-only Google administration.
-- [ ] Build product management, image uploads and availability/stock controls.
-- [ ] Replace About photography with uploaded unmodified transparent official logo.
-- [ ] Verify authorization and product edits across public/admin views.
+- [x] Connect persistent catalog and secure owner-only Google administration.
+- [x] Build product management, image uploads and availability/stock controls.
+- [x] Replace About photography with uploaded unmodified transparent official logo.
+- [x] Verify public catalog, visitor redirect and denied writes/role escalation for unauthorized identity.
+- [ ] Verify owner sign-in, photo uploads and saved edits through admin/public views — blocked until the owner completes first Google sign-in (no auth users exist).

@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { useState, type FormEvent } from 'react';
 import { useSuspenseQuery, useQueryClient } from '@tanstack/react-query';
-import { Plus, Pencil, Trash2, LogOut, Search, Upload, X } from 'lucide-react';
+import { Plus, Pencil, Trash2, LogOut, Search, Upload } from 'lucide-react';
 import { productsQuery } from '@/lib/products-query';
 import { claimAdmin, saveProduct, deleteProduct } from '@/lib/products.functions';
 import { supabase } from '@/integrations/supabase/client';

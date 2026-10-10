@@ -21,9 +21,9 @@ export const listProducts = createServerFn({ method: 'GET' }).handler(async (): 
     let image = p.image;
     if (image.startsWith('storage:')) {
       const { data: signed } = await client.storage.from('product-images').createSignedUrl(image.slice(8), 3600);
-      if (signed) image = signed.signedUrl.replace(url, import.meta.env.VITE_SUPABASE_URL);
+      if (signed) image = signed.signedUrl.replace(url, import.meta.env['VITE_SUPABASE_URL'] ?? url);
     }
-    return { id: p.id, name: p.name, brand: p.brand, category: p.category as Product['category'], price: Number(p.price), originalPrice: p.original_price === null ? undefined : Number(p.original_price), onSale: p.original_price !== null, description: p.description, featured: p.featured, available: p.available, stock: p.stock, image, imageSource: p.image };
+    return { id: p.id, name: p.name, brand: p.brand, category: p.category as Product['category'], price: Number(p.price), ...(p.original_price === null ? {} : { originalPrice: Number(p.original_price) }), onSale: p.original_price !== null, description: p.description, featured: p.featured, available: p.available, stock: p.stock, image, imageSource: p.image };
   }));
 });
 

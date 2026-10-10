@@ -17,13 +17,15 @@ export const listProducts = createServerFn({ method: 'GET' }).handler(async (): 
   } } });
   const { data, error } = await client.from('products').select('*').order('sort_order').order('created_at');
   if (error) throw new Error('Não foi possível carregar o catálogo.');
+  const resolveImage = async (source: string | null): Promise<string | null> => {
+    if (!source) return null;
+    if (!source.startsWith('storage:')) return source;
+    const { data: signed } = await client.storage.from('product-images').createSignedUrl(source.slice(8), 3600);
+    return signed ? signed.signedUrl.replace(url, import.meta.env['VITE_SUPABASE_URL'] ?? url) : null;
+  };
   return Promise.all((data ?? []).map(async (p) => {
-    let image = p.image;
-    if (image.startsWith('storage:')) {
-      const { data: signed } = await client.storage.from('product-images').createSignedUrl(image.slice(8), 3600);
-      if (signed) image = signed.signedUrl.replace(url, import.meta.env['VITE_SUPABASE_URL'] ?? url);
-    }
-    return { id: p.id, name: p.name, brand: p.brand, category: p.category as Product['category'], price: Number(p.price), ...(p.original_price === null ? {} : { originalPrice: Number(p.original_price) }), onSale: p.original_price !== null, description: p.description, featured: p.featured, available: p.available, stock: p.stock, image, imageSource: p.image };
+    const [cover, alternativeImage] = await Promise.all([resolveImage(p.image), resolveImage(p.alternative_image)]);
+    return { id: p.id, name: p.name, brand: p.brand, category: p.category as Product['category'], price: Number(p.price), ...(p.original_price === null ? {} : { originalPrice: Number(p.original_price) }), onSale: p.original_price !== null, description: p.description, featured: p.featured, available: p.available, stock: p.stock, image: cover ?? '', imageSource: p.image, alternativeImage, alternativeImageSource: p.alternative_image };
   }));
 });
 

@@ -43,6 +43,8 @@ export interface Product {
   description?: string;
   image: string;
   imageSource?: string;
+  alternativeImage?: string | null;
+  alternativeImageSource?: string | null;
   available?: boolean | null;
   stock?: number | null;
 }

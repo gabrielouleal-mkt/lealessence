@@ -29,7 +29,7 @@ export const WHATSAPP_KIT = whatsappLink(
   "Olá! Vi o site da Leal Essence e gostaria de ajuda para montar um kit de presente personalizado.",
 );
 
-export type Category = "masculinos" | "femininos";
+export type Category = "masculinos" | "femininos" | "unissex";
 
 export interface Product {
   id: string;
@@ -42,6 +42,9 @@ export interface Product {
   featured?: boolean;
   description?: string;
   image: string;
+  imageSource?: string;
+  available?: boolean | null;
+  stock?: number | null;
 }
 
 export const PRODUCTS: Product[] = [

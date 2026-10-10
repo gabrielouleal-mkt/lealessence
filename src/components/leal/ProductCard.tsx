@@ -57,6 +57,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
         )}
 
         <div className="mt-auto pt-5">
+          {product.available === false && <p className="mb-2 text-xs text-muted-foreground">Indisponível no momento</p>}
           <div className="flex items-baseline gap-2">
             <span className="font-display text-2xl font-semibold text-primary">
               {formatPrice(product.price)}

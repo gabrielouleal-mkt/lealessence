@@ -1,5 +1,7 @@
 import { useMemo, useState } from "react";
-import { CATALOG_BRANDS, PRODUCTS, type Category } from "@/data/catalog";
+import { type Category } from "@/data/catalog";
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { productsQuery } from '@/lib/products-query';
 import { ProductCard } from "./ProductCard";
 
 type Filter = "todos" | Category;
@@ -10,6 +12,8 @@ interface CatalogProps {
 }
 
 export function Catalog({ brand, onBrandChange }: CatalogProps) {
+  const { data: PRODUCTS } = useSuspenseQuery(productsQuery);
+  const CATALOG_BRANDS = [...new Set(PRODUCTS.map(p => p.brand))];
   const [category, setCategory] = useState<Filter>("todos");
   const [query, setQuery] = useState("");
 
@@ -18,8 +22,9 @@ export function Catalog({ brand, onBrandChange }: CatalogProps) {
       todos: PRODUCTS.length,
       masculinos: PRODUCTS.filter((p) => p.category === "masculinos").length,
       femininos: PRODUCTS.filter((p) => p.category === "femininos").length,
+      unissex: PRODUCTS.filter((p) => p.category === "unissex").length,
     }),
-    [],
+    [PRODUCTS],
   );
 
   const filtered = useMemo(() => {
@@ -30,12 +35,13 @@ export function Catalog({ brand, onBrandChange }: CatalogProps) {
         (!brand || p.brand === brand) &&
         (!q || p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q)),
     );
-  }, [category, brand, query]);
+  }, [category, brand, query, PRODUCTS]);
 
   const tabs: { key: Filter; label: string }[] = [
     { key: "todos", label: "Todos" },
     { key: "masculinos", label: "Masculinos" },
     { key: "femininos", label: "Femininos" },
+    ...(counts.unissex ? [{ key: 'unissex' as const, label: 'Unissex' }] : []),
   ];
 
   return (

@@ -7,3 +7,6 @@
 - [x] Replace About photography with uploaded unmodified transparent official logo.
 - [x] Verify public catalog, visitor redirect and denied writes/role escalation for unauthorized identity.
 - [ ] Verify owner sign-in, photo uploads and saved edits through admin/public views — blocked until the owner completes first Google sign-in (no auth users exist).
+- [ ] Add optional persistent alternative photos with independent admin upload, preview, replace and removal.
+- [ ] Add shared product-card crossfade and touch photo selection.
+- [ ] Enable all desktop/mobile brand shortcuts and verify filters, photo behavior and persistence.

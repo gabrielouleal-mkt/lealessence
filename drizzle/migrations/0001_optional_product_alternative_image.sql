@@ -1,0 +1,2 @@
+ALTER TABLE public.products ADD COLUMN IF NOT EXISTS alternative_image text;
+COMMENT ON COLUMN public.products.alternative_image IS 'Optional alternative product photo reference; cover image remains independent.';

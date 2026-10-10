@@ -176,7 +176,7 @@ export function Hero() {
               }}
             >
               <p className="text-[0.625rem] tracking-[0.28em] text-muted-foreground uppercase">
-                Curadoria
+                Arte conceitual · Curadoria
               </p>
               <p className="font-display mt-1 text-lg leading-tight text-primary italic">
                 Lattafa · Rasasi · Armaf

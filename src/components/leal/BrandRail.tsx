@@ -32,7 +32,7 @@ function BrandColumn({
 }) {
   return (
     <aside
-      className={`pointer-events-none fixed top-1/2 z-10 hidden -translate-y-1/2 flex-col items-center gap-10 xl:flex ${
+      className={`pointer-events-none fixed top-1/2 z-10 hidden -translate-y-1/2 flex-col items-center gap-10 2xl:flex ${
         side === "left" ? "left-6 2xl:left-12" : "right-6 2xl:right-12"
       }`}
       aria-label={`Marcas — coluna ${side === "left" ? "esquerda" : "direita"}`}
@@ -47,7 +47,7 @@ function BrandColumn({
             type="button"
             disabled={!inCatalog}
             onClick={() => onSelectBrand(active ? null : brand)}
-            title={inCatalog ? `Filtrar por ${brand}` : `${brand} — em breve no catálogo`}
+            title={inCatalog ? `Filtrar por ${brand}` : `${brand} — referência tipográfica de protótipo`}
             className={`pointer-events-auto font-display text-sm tracking-[0.3em] uppercase transition-all duration-500 [writing-mode:vertical-rl] ${
               active
                 ? "text-primary opacity-100"
@@ -70,7 +70,7 @@ export function BrandMarquee() {
   const all = [...BRAND_RAIL_LEFT, ...BRAND_RAIL_RIGHT];
   return (
     <div
-      className="relative overflow-hidden border-y border-border bg-cream py-5 xl:hidden"
+      className="relative overflow-hidden border-y border-border bg-cream py-5 2xl:hidden"
       aria-label="Marcas trabalhadas"
     >
       <div className="animate-marquee flex w-max items-center gap-12 pr-12">

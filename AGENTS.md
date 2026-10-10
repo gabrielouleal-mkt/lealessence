@@ -15,3 +15,5 @@
 - Use Cloud-backed product reads through one shared query and authenticated server functions for product mutations, preserving the existing presentation.
 - Authorize administration with a protected role plus a verified Google identity check in database functions and RLS, never user-editable metadata.
 - Store new product photos in private Storage and resolve signed read URLs for the public catalog because public buckets are workspace-blocked.
+- Store the optional alternative photo separately from the cover and resolve both through the shared product query; all product cards share the same photo transition so gallery behavior stays consistent.
+- Normalize brand matching in the shared catalog filter; all desktop and touch brand shortcuts use the home selection callback so empty-result brands remain real filters.

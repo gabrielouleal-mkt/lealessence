@@ -1,7 +1,8 @@
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { useState, type FormEvent } from 'react';
 import { useSuspenseQuery, useQueryClient } from '@tanstack/react-query';
-import { Plus, Pencil, Trash2, LogOut, Search, Upload } from 'lucide-react';
+import { Plus, Pencil, Trash2, LogOut, Search } from 'lucide-react';
+import { ProductPhotoField } from '@/components/leal/ProductPhotoField';
 import { productsQuery } from '@/lib/products-query';
 import { claimAdmin, saveProduct, deleteProduct } from '@/lib/products.functions';
 import { supabase } from '@/integrations/supabase/client';
@@ -47,27 +48,48 @@ function Admin() {
 
 function ProductForm({ product, onSaved }: { product: Product | null; onSaved: () => Promise<void> }) {
   const [image, setImage] = useState(product?.imageSource ?? product?.image ?? ''); const [preview, setPreview] = useState(product?.image ?? ''); const [file, setFile] = useState<File | null>(null);
+  const [alternativeImage, setAlternativeImage] = useState<string | null>(product?.alternativeImageSource ?? product?.alternativeImage ?? null);
+  const [alternativePreview, setAlternativePreview] = useState(product?.alternativeImage ?? '');
+  const [alternativeFile, setAlternativeFile] = useState<File | null>(null);
   const [busy, setBusy] = useState(false); const [error, setError] = useState('');
+  function selectPhoto(next: File, alternative: boolean) {
+    if (!['image/png', 'image/jpeg', 'image/webp'].includes(next.type) || next.size > 5 * 1024 * 1024) { setError('Envie JPG, PNG ou WebP de até 5 MB.'); return; }
+    setError('');
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result !== 'string') return;
+      if (alternative) { setAlternativeFile(next); setAlternativePreview(reader.result); }
+      else { setFile(next); setPreview(reader.result); }
+    };
+    reader.readAsDataURL(next);
+  }
+  async function uploadPhoto(next: File) {
+    const extension = next.type === 'image/png' ? 'png' : next.type === 'image/webp' ? 'webp' : 'jpg';
+    const path = `${crypto.randomUUID()}.${extension}`;
+    const { error: uploadError } = await supabase.storage.from('product-images').upload(path, next, { contentType: next.type, upsert: false });
+    if (uploadError) throw new Error('Não foi possível enviar a foto.');
+    return `storage:${path}`;
+  }
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); const form = new FormData(event.currentTarget); setBusy(true); setError('');
     try {
       let source = image;
       if (file) {
-        if (!['image/png','image/jpeg','image/webp'].includes(file.type) || file.size > 5 * 1024 * 1024) throw new Error('Envie JPG, PNG ou WebP de até 5 MB.');
-        const extension = file.type === 'image/png' ? 'png' : file.type === 'image/webp' ? 'webp' : 'jpg'; const path = `${crypto.randomUUID()}.${extension}`;
-        const { error: uploadError } = await supabase.storage.from('product-images').upload(path, file, { contentType: file.type, upsert: false });
-        if (uploadError) throw new Error('Não foi possível enviar a foto.'); source = `storage:${path}`; setImage(source);
+        source = await uploadPhoto(file); setImage(source); setFile(null);
       }
+      let alternativeSource = alternativeImage;
+      if (alternativeFile) { alternativeSource = await uploadPhoto(alternativeFile); setAlternativeImage(alternativeSource); setAlternativeFile(null); }
       const number = (name: string) => Number(String(form.get(name)).replace(',', '.'));
       const sale = String(form.get('sale') ?? '').trim(); const stock = String(form.get('stock') ?? '').trim();
-      const parsed = productInput.safeParse({ ...(product ? { id: product.id } : {}), name: form.get('name'), brand: form.get('brand'), description: form.get('description'), category: form.get('category'), price: sale ? number('sale') : number('price'), original_price: sale ? number('price') : null, image: source, featured: form.has('featured'), available: form.get('available') === '' ? null : form.get('available') === 'true', stock: stock ? number('stock') : null });
+      const parsed = productInput.safeParse({ ...(product ? { id: product.id } : {}), name: form.get('name'), brand: form.get('brand'), description: form.get('description'), category: form.get('category'), price: sale ? number('sale') : number('price'), original_price: sale ? number('price') : null, image: source, alternative_image: alternativeSource, featured: form.has('featured'), available: form.get('available') === '' ? null : form.get('available') === 'true', stock: stock ? number('stock') : null });
       if (!parsed.success) throw new Error(parsed.error.issues[0]?.message ?? 'Confira os dados.');
       await saveProduct({ data: parsed.data }); await onSaved();
     } catch (e) { setError(e instanceof Error ? e.message : 'Não foi possível salvar.'); } finally { setBusy(false); }
   }
   const inputClass = 'w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground';
   return <form onSubmit={submit} className="space-y-5">
-    <div className="flex items-center gap-5"><div className="flex size-28 shrink-0 items-center justify-center rounded-md bg-cream">{preview ? <img src={preview} alt="Foto do perfume" className="size-full object-contain" /> : <Upload className="size-6 text-muted-foreground" />}</div><label className="flex-1 text-sm">Foto do perfume<input type="file" accept="image/png,image/jpeg,image/webp" disabled={busy} className="mt-2 block w-full text-xs" onChange={e => { const next = e.target.files?.[0]; if (!next) return; if (next.size > 5 * 1024 * 1024) { setError('A foto deve ter até 5 MB.'); return; } setFile(next); const reader = new FileReader(); reader.onload = () => { if (typeof reader.result === 'string') setPreview(reader.result); }; reader.readAsDataURL(next); }} /></label></div>
+    <ProductPhotoField label="Foto do perfume" preview={preview} disabled={busy} onSelect={next => selectPhoto(next, false)} />
+    <ProductPhotoField label="Foto alternativa (opcional)" preview={alternativePreview} disabled={busy} onSelect={next => selectPhoto(next, true)} onRemove={() => { setAlternativeImage(null); setAlternativeFile(null); setAlternativePreview(''); }} />
     <div className="grid gap-4 sm:grid-cols-2"><label className="text-sm">Nome<Input name="name" required maxLength={120} defaultValue={product?.name} className="mt-1" /></label><label className="text-sm">Marca<Input name="brand" required maxLength={100} defaultValue={product?.brand} className="mt-1" /></label></div>
     <label className="block text-sm">Descrição<textarea name="description" rows={4} maxLength={5000} defaultValue={product?.description} className={`${inputClass} mt-1`} /></label>
     <div className="grid gap-4 sm:grid-cols-2"><label className="text-sm">Categoria<select name="category" defaultValue={product?.category ?? 'masculinos'} className={`${inputClass} mt-1`}><option value="masculinos">Masculinos</option><option value="femininos">Femininos</option><option value="unissex">Unissex</option></select></label><label className="text-sm">Disponibilidade<select name="available" defaultValue={product?.available == null ? '' : String(product.available)} className={`${inputClass} mt-1`}><option value="">Não informada</option><option value="true">Disponível</option><option value="false">Indisponível</option></select></label><label className="text-sm">Preço normal (R$)<Input name="price" type="number" min="0" step="0.01" required defaultValue={product?.originalPrice ?? product?.price} className="mt-1" /></label><label className="text-sm">Preço promocional (R$)<Input name="sale" type="number" min="0" step="0.01" defaultValue={product?.originalPrice ? product.price : ''} className="mt-1" /></label><label className="text-sm">Quantidade em estoque<Input name="stock" type="number" min="0" step="1" defaultValue={product?.stock ?? ''} className="mt-1" /></label><label className="flex items-center gap-3 text-sm"><input type="checkbox" name="featured" defaultChecked={product?.featured} className="size-4 accent-primary" />Destaque na página inicial</label></div>

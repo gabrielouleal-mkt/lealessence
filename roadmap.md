@@ -8,5 +8,10 @@
 - [x] Verify public catalog, visitor redirect and denied writes/role escalation for unauthorized identity.
 - [ ] Verify owner sign-in, photo uploads and saved edits through admin/public views — blocked until the owner completes first Google sign-in (no auth users exist).
 - [ ] Add optional persistent alternative photos with independent admin upload, preview, replace and removal.
-- [ ] Add shared product-card crossfade and touch photo selection.
-- [ ] Enable all desktop/mobile brand shortcuts and verify filters, photo behavior and persistence.
+- [x] Add shared product-card crossfade and touch photo selection. (Verified in browser, desktop hover + touch viewport, against a simulated catalog API.)
+- [x] Enable all desktop/mobile brand shortcuts and verify filters (all 13 brands, URL `?marca=`, empty state, clear filter). Rail columns now fit the viewport height.- [x] Product detail modal with olfactory pyramid, projection, longevity and climate (data in `src/lib/fragrance-profiles.ts`; only products with sourced notes).
+- [x] Family filter, highlighted live search, gender tabs always visible.
+- [x] Shopping bag (localStorage) with formatted WhatsApp order and total.
+- [x] Optional decant selector (`src/lib/variants.ts`, empty until prices are provided).
+- [x] Gold shimmer on buttons/offer badge, scent quiz, FAQ accordion.
+- [ ] Still needs a real run with the owner's Google sign-in: alt-photo upload/replace/remove saved to Cloud and seen from another device.

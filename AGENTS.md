@@ -17,3 +17,6 @@
 - Store new product photos in private Storage and resolve signed read URLs for the public catalog because public buckets are workspace-blocked.
 - Store the optional alternative photo separately from the cover and resolve both through the shared product query; all product cards share the same photo transition so gallery behavior stays consistent.
 - Normalize brand matching in the shared catalog filter; all desktop and touch brand shortcuts use the home selection callback so empty-result brands remain real filters.
+- Selected brand lives in the URL (`/?marca=Armaf`); rails, mobile marquee and catalog chips share the same `filterProducts` (normalized brand match). Brands from the database that are missing from the decorative rail lists are appended to the shorter column.
+- Fragrance notes, decant prices and FAQ answers are plain editable TS data (`fragrance-profiles.ts`, `variants.ts`, `Faq.tsx`); never invent values, a product without an entry simply shows no pyramid/selector.
+- The bag is client-only (localStorage `leal-cart-v1`) and ends in a wa.me link; there is no checkout.
